@@ -1,0 +1,17 @@
+DATASET:
+    BATCH_SIZE: 128
+
+MODEL:
+    CLASS_NAME: "AutoEncoderMLP"
+    WINDOW_SIZE: 25
+    HIDDEN_DIMS: [256, 128, 64]
+    THRESHOLD: 0.95
+
+OPTIMIZATION:
+    LR: 0.001
+    NUM_EPOCHS: 10
+
+EXPERIMENT_NAME: "ae_anomaly_detection"
+TASK: "anomaly_detection"
+VERBOSE: True
+DEVICE: "cpu"

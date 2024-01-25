@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "ice"
+version = "0.0.1"
+description = "Python library for training, evaluating, using deep learning for industrial monitoring tasks."
+authors = ["Author <email>"]
+license = "License"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+numpy = "^1.23.5"
+pandas = "^1.5.3"
+torch = "^2.0.0"
+tqdm = "^4.66.1"
+requests = "^2.31.0"
+scikit-learn = "^1.2.2"
+
+# [tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+mkdocs = "^1.3.1"
+mknotebooks = "^0.8.0"
+markdown-include = "^0.7.0"
+python-markdown-math = "^0.8"
+mkdocs-material = "^8.4.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

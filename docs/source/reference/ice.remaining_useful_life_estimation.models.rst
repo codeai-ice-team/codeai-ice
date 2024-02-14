@@ -1,10 +1,19 @@
-ice.remaining\_useful\_life\_estimation.models package
-======================================================
+Health index models
+===================
 
-Module contents
----------------
+BaseHealthIndexEstimation
+-------------------------
 
-.. automodule:: ice.remaining_useful_life_estimation.models
+.. automodule:: ice.remaining_useful_life_estimation.models.base
    :members:
    :undoc-members:
    :show-inheritance:
+
+MLP
+---
+
+.. automodule:: ice.remaining_useful_life_estimation.models.mlp
+   :members:
+   :undoc-members:
+   :show-inheritance:
+

@@ -10,7 +10,7 @@ Dataset
 The dataset includes the result of an experiment conducted on a Matsuura machining
 centre (MC-510V) that performed dry, rough milling of cast iron or J45 stainless 
 steel workpieces with a six-tooth face mill with KC710 carbide inserts at various 
-cutting parameters \cite{agogino207milling}. The dataset contains 16 sub-datasets 
+cutting parameters [1]. The dataset contains 16 sub-datasets 
 in which the cutting depths, feed rates and material types were changed. The sensors 
 used to record the milling process are two vibroaccelerometers, two "AE" sensors, 
 and two "CTA" current sensors.
@@ -42,14 +42,18 @@ dataset documentation:
 where :math:`T` is tool life, :math:`C_{v}` is the constant related to 1 min tool life, 
 :math:`v_{c}` is cutting speed, :math:`k` is the Taylor exponent.
 
-We performed an approximation (Fig. \ref{mil_data}) of the wear measured at the end of 
-each cut using the Nelder Mead method from SciPy library \cite{2020SciPy-NMeth}. The 
+We performed an approximation (Fig. 1) of the wear measured at the end of 
+each cut using the Nelder Mead method from SciPy library [2]. The 
 obtained equation parameters characterize the process itself by definition, and the 
 character of the curve behavior between the measured points corresponds to the empirically 
 verified equation.
 
-.. image:: ../../_static/hi/mil_data.png
+.. figure:: ../../_static/hi/mil_data.png
    :align: center
+
+   Figure 1: Milling dataset. A – Sensor reading examples of the first dataset case, used as input for
+   pipeline. B – Target tool wear constructed using the Taylor equation to approximate missing sawtooth
+   wear values, used for HI construction.
 
 Next, we transformed the curves characterizing the process and the state of the device 
 simultaneously to the device Health Index. To do this, we performed min-max scaling 
@@ -57,8 +61,10 @@ simultaneously to the device Health Index. To do this, we performed min-max scal
 corresponds to the maximum allowable wear of 1.58 mm, and subtracted the obtained curves 
 from 1 to reduce the impact of implicit weighting of healthy states.
 
-.. image:: ../../_static/hi/HI_deviation.png
+.. figure:: ../../_static/hi/HI_deviation.png
    :align: center
+
+   Figure 2: Milling dataset targets.
 
 Metrics
 """""""
@@ -79,9 +85,28 @@ equipment :math:`i`, :math:`N` is number of test samples.
 References
 """"""""""
 
-The reference results of state-of-the-art papers for the original \cite{agogino207milling} 
-dataset are presented in table \ref{tab:mil-sota-1}.
+The reference results of state-of-the-art papers for the original [1] 
+dataset are presented in table 1.
 
 Since the test dataset involves processes with unknown characteristics, it limits most 
 related HI-based work approaches, especially similarity-based techniques, which require 
 information about similar process trajectories. 
+
+.. table:: Table 1: References for C-Milling dataset, cuts ‘1’, ‘3’, ‘7’ testing, with the original dataset wear target.
+
+   +--------------------------------+-----------------------+
+   | Model                          | RMSE (cycles)         | 
+   +================================+=======================+
+   |MapReduce-based PRFs (2020)     | 0.0531                |
+   +--------------------------------+-----------------------+
+   |LS-SVM (2020)                   | 0.0254                |
+   +--------------------------------+-----------------------+
+   |TAKELM (2020)                   |0.0134                 |
+   +--------------------------------+-----------------------+
+   |LSTM-based (2018)               | 0.0148                |
+   +--------------------------------+-----------------------+
+
+[1]   Agogino, A.; Goebel, K. Milling Data Set. NASA Prognostics Data Repository 2007.
+
+[2]   Virtanen, P. et al. SciPy 1.0: Fundamental Algorithms for Scientific Computing in Python. Nature
+Methods 2020, 17, 261–272.

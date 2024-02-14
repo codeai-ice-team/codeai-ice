@@ -8,7 +8,7 @@ from torch.utils.data import DataLoader
 import torch
 from torch import nn
 from ice.health_index_estimation.utils import SlidingWindowDataset
-from ice.health_index_estimation.metrics import mse
+from ice.health_index_estimation.metrics import mse, rmse
 
 
 class BaseHealthIndexEstimation (BaseModel, ABC):
@@ -95,7 +95,7 @@ class BaseHealthIndexEstimation (BaseModel, ABC):
                 print(f"Epoch {e+1}, Loss: {loss.item():.4f}")
 
     def evaluate(self, df: pd.DataFrame, target: pd.Series) -> dict:
-        """Evaluate the metrics: mse.
+        """Evaluate the metrics: mse, rmse.
 
         Args:
             df (pandas.DataFrame): A dataframe with sensor data. Index has
@@ -124,6 +124,7 @@ class BaseHealthIndexEstimation (BaseModel, ABC):
         pred = torch.concat(pred).numpy()
         metrics = {
             "mse": mse(pred, target),
+            "rmse": rmse(pred, target),
         }
         self._store_atrifacts_inference(metrics)
         return metrics

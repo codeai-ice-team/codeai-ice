@@ -8,7 +8,12 @@ pip install -e .
 ```
 
 ## Testing
-Go to this fodel and run
+Go to this folder and run
 ```
 pytest ice/tests
+```
+
+## Documentation
+```
+https://codeai-ice-team.github.io/codeai-ice-docs/
 ```

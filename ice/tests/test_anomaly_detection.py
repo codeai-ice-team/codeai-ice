@@ -5,7 +5,7 @@ from ice.base import BaseDataset
 from ice.anomaly_detection import models as ad_models
 from ice.anomaly_detection import datasets as ad_datasets
 from ice.anomaly_detection.metrics import (
-    accuracy)
+    accuracy, true_positive_rate, false_positive_rate)
 from inspect import getmembers, isclass
 import torch
 
@@ -55,6 +55,18 @@ class TestOnSyntheticData:
         assert "An index should contain columns `run_id` and `sample`." in str(exc_info.value)
 
     @pytest.mark.parametrize("model_class", models)
+    def test_param_estimation(self, model_class):
+        self.model = model_class(window_size=self.window_size)
+        self.model.fit(self.df[:100])
+
+        num_params, inference_time = self.model.model_param_estimation()
+
+        print(num_params, inference_time)
+
+        assert num_params >= 0
+        assert inference_time[0] >= 0
+
+    @pytest.mark.parametrize("model_class", models)
     def test_fit(self, model_class):
         self.model = model_class(window_size=self.window_size)
         self.model._create_model(self.df)
@@ -73,23 +85,39 @@ class TestOnSyntheticData:
     def test_predict(self, model_class):
         self.model = model_class(window_size=self.window_size)
         self.model._create_model(self.df)
+        self.model.fit(self.df[:100])
         sample = torch.randn(16, self.window_size, self.num_sensors)
         pred_target = self.model.predict(sample)
-        assert pred_target.shape == sample.shape
+        assert pred_target.shape == (16,)
 
     def test_metrics(self):
         np.random.seed(0)
         pred = np.random.permutation(self.target)
         assert round(accuracy(pred, self.target), 4) == 0.47
+        tpr = true_positive_rate(pred, self.target)
+        assert len(tpr) == 1
+        assert tpr[0] == 0.47
+        fpr = false_positive_rate(pred, self.target)
+        assert len(fpr) == 1
+        assert fpr[0] == 0.53
 
 
 @pytest.mark.parametrize("dataset_class", datasets)
 def test_dataset_loading(dataset_class):
     with pytest.raises(Exception) as exc_info:
         dataset_class(num_chunks=1, force_download=True)
-    assert "File is not a zip file" in str(exc_info.value)
+    if "File is not a zip file" in str(exc_info.value):
+        assert True
+    elif "Download limit exceeded for resource" in str(exc_info.value):
+        assert True
+    else:
+        assert False
 
 
 def test_dataset_small_tep():
-    ad_datasets.AnomalyDetectionSmallTEP(force_download=True)
-    assert True
+    try:
+        ad_datasets.AnomalyDetectionSmallTEP(force_download=True)
+    except Exception as exc_info:
+        assert "Download limit exceeded for resource" in str(exc_info)
+    else:
+        assert True

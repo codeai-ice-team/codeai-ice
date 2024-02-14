@@ -1,6 +1,6 @@
-#################
-ICE documentation
-#################
+#####################################
+ICE - Industrial Condition Evaluation
+#####################################
 
 .. toctree::
    :maxdepth: 1
@@ -8,21 +8,20 @@ ICE documentation
 
    Getting started <start/index>
    Advanced materials <advanced/index>
-   API reference <reference/modules>
+   API reference <reference/index>
    Custom classes <custom/index>
    Benchmarking <benchmark/index>
 
-ICE - Industrial Condition Evaluation
-
+Python library for training, evaluating, using deep learning for industrial monitoring tasks.
 
 .. grid:: 1 2 3 4
 
    .. grid-item-card:: Getting started
 
-      Introduction to the ICE library. Task descriptions. Dataset descriptions.
+      Installation, task descriptions and quick tutorials.
 
       .. button-ref:: start
-         :color: info
+         :color: primary
 
          Getting started
 
@@ -31,16 +30,16 @@ ICE - Industrial Condition Evaluation
       Advanced materials and tutorials.
 
       .. button-ref:: advanced
-         :color: info
+         :color: primary
 
          Advanced materials
 
    .. grid-item-card:: API reference
 
-      Detailed description of classe and functions
+      Detailed description of classes and functions
 
       .. button-ref:: reference
-         :color: info
+         :color: primary
 
          API reference
 
@@ -49,15 +48,15 @@ ICE - Industrial Condition Evaluation
       How to create your own model? How to use your data?
 
       .. button-ref:: custom
-         :color: info
+         :color: primary
 
          Custom classes
 
    .. grid-item-card:: Benchmarking
 
-      Which models are the best? Tables with metrics.
+      Which model are the best?
 
       .. button-ref:: benchmark
-         :color: info
+         :color: primary
 
          Benchmarking

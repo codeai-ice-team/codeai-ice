@@ -9,7 +9,11 @@ from torch.utils.data import DataLoader
 
 from ice.anomaly_detection.utils import SlidingWindowDataset
 from ice.base import BaseModel
-from ice.anomaly_detection.metrics import accuracy
+from ice.anomaly_detection.metrics import (
+    accuracy, true_positive_rate, false_positive_rate)
+
+
+pd.options.mode.copy_on_write = True
 
 
 class BaseAnomalyDetection(BaseModel, ABC):
@@ -73,7 +77,8 @@ class BaseAnomalyDetection(BaseModel, ABC):
     def _predict(self, sample: torch.Tensor) -> torch.Tensor:
         input = sample.to(self.device)
         output = self.model(input)
-        return output.cpu()
+        error = self.loss_fn(output, input).mean(dim=(1, 2))
+        return (error > self.threshold_value).float().cpu()
 
     def _train_nn(self, df: pd.DataFrame):
         self.model.train()
@@ -82,20 +87,21 @@ class BaseAnomalyDetection(BaseModel, ABC):
 
         dataset = SlidingWindowDataset(df, window_size=self.window_size)
         self.dataloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True)
-        errors = []
         for e in trange(self.num_epochs, desc='Epochs ...', disable=(not self.verbose)):
+            errors = []
             for sample in tqdm(self.dataloader, desc='Steps ...', leave=False, disable=(not self.verbose)):
                 input = sample.to(self.device)
                 output = self.model(input)
-                loss = self.loss_fn(output, input)
+                error = self.loss_fn(output, input).mean(dim=(1, 2))
+                loss = error.mean()
                 self.optimizer.zero_grad()
                 loss.backward()
                 self.optimizer.step()
-                error = torch.sum(torch.abs(input - output), dim=(1, 2))
-                errors = np.append(errors, error.detach().numpy())
+                errors.append(error.detach())
             if self.verbose:
                 print(f'Epoch {e+1}, Loss: {loss.item():.4f}')
-        self.threshold_value = np.quantile(errors, self.threshold)
+        errors = torch.cat(errors)
+        self.threshold_value = torch.quantile(errors, self.threshold).item()
 
     def evaluate(self, df: pd.DataFrame, target: pd.Series) -> dict:
         """Evaluate the metrics: accuracy.
@@ -123,16 +129,16 @@ class BaseAnomalyDetection(BaseModel, ABC):
         for sample, _target in tqdm(
             self.dataloader, desc='Steps ...', leave=False, disable=(not self.verbose)
         ):
-            input = sample.to(self.device)
+            sample = sample.to(self.device)
             target.append(_target)
             with torch.no_grad():
-                output = self.predict(input)
-                error = torch.sum(torch.abs(input - output), dim=(1, 2))
-                pred.append((error > self.threshold_value).float())
+                pred.append(self.predict(sample))
         target = torch.concat(target).numpy()
         pred = torch.concat(pred).numpy()
         metrics = {
-            'accuracy': accuracy(pred, target)
+            'accuracy': accuracy(pred, target),
+            'true_positive_rate': true_positive_rate(pred, target),
+            'false_positive_rate': false_positive_rate(pred, target),
         }
         self._store_atrifacts_inference(metrics)
         return metrics

@@ -10,38 +10,31 @@ class MLP(nn.Module):
             self,
             num_sensors: int,
             window_size: int,
-            num_layers: int,
             hidden_dims: list,
-            type: str
+            decoder: bool = False,
             ):
         super().__init__()
         self.num_sensors = num_sensors
         self.window_size = window_size
         self.hidden_dims = [num_sensors * window_size]
-        self.type = type
-        if hidden_dims is not None and self.type == 'encoder':
-            self.hidden_dims = self.hidden_dims + hidden_dims
-        elif hidden_dims is not None and self.type == 'decoder':
+        self.decoder = decoder
+        if self.decoder:
             self.hidden_dims = hidden_dims + self.hidden_dims
         else:
-            for i in range(num_layers):
-                dim = self.hidden_dims[i] // 2
-                self.hidden_dims.append(dim)
-            if self.type == 'decoder':
-                self.hidden_dims.reverse()
+            self.hidden_dims = self.hidden_dims + hidden_dims
         self.mlp = nn.Sequential(nn.Flatten())
-        for i in range(num_layers):
+        for i in range(len(hidden_dims)):
             self.mlp.append(nn.Linear(
                                 self.hidden_dims[i],
                                 self.hidden_dims[i + 1])
                                 )
-            if self.type == 'decoder' and i + 1 == num_layers:
+            if self.decoder and i + 1 == len(hidden_dims):
                 break
             self.mlp.append(nn.ReLU())
 
     def forward(self, x):
         output = self.mlp(x)
-        if self.type == 'decoder':
+        if self.decoder:
             return output.view(-1, self.window_size, self.num_sensors)
 
         return output
@@ -84,10 +77,9 @@ class AutoEncoderMLP(BaseAnomalyDetection):
         )
 
         self.window_size = window_size
-        self.num_layers = len(hidden_dims)
         self.hidden_dims = hidden_dims
         self.threshold = threshold
-        self.loss_fn = nn.MSELoss(reduction='mean')
+        self.loss_fn = nn.L1Loss(reduction='none')
         self.preprocessing = True
         self.scaler = StandardScaler()
 
@@ -103,15 +95,12 @@ class AutoEncoderMLP(BaseAnomalyDetection):
             MLP(
                 num_sensors,
                 self.window_size,
-                self.num_layers,
                 hidden_dims=self.hidden_dims,
-                type='encoder'
             ),
             MLP(
                 num_sensors,
                 self.window_size,
-                self.num_layers,
                 hidden_dims=self.hidden_dims[::-1],
-                type='decoder'
+                decoder=True
             )
             )

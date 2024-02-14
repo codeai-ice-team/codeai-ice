@@ -9,3 +9,4 @@ Quick tutorials
     :caption: Contents:
 
     fault_diagnosis_basic
+    anomaly_detection_basic

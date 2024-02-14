@@ -1,9 +1,28 @@
 from torch import nn
 from ice.remaining_useful_life_estimation.models.base import BaseRemainingUsefulLifeEstimation
 from pandas import DataFrame, Series
+import torch
 
 
-class MLP(BaseRemainingUsefulLifeEstimation):
+class LSTM_model(nn.Module):
+    def __init__(self, num_sensors, hidden_size, device, num_layers=2,):
+        super(LSTM_model, self).__init__()
+        self.num_sensors = num_sensors
+        self.hidden_size = hidden_size
+        self.num_layers = num_layers
+        self.device = device
+
+        self.lstm = nn.LSTM(input_size=num_sensors, hidden_size=hidden_size,
+                          num_layers=num_layers, batch_first=True)
+
+    def forward(self, x):
+        h_0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(self.device) #hidden state
+        c_0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size).to(self.device) #internal state
+        
+        output, (hn, cn) = self.lstm(x, (h_0, c_0)) 
+        return output[:, -1, :]
+
+class LSTM(BaseRemainingUsefulLifeEstimation):
     """
     Multilayer Perceptron (MLP) consists of input, hidden, output layers and
     ReLU activation. Each sample is reshaped to a vector (B, L, C) -> (B, L * C)
@@ -16,6 +35,8 @@ class MLP(BaseRemainingUsefulLifeEstimation):
         window_size: int = 32,
         stride: int = 1,
         hidden_dim: int = 512,
+        hidden_size: int = 256,
+        dropout_value: float = 0.5,
         batch_size: int = 64,
         lr: float = 1e-4,
         num_epochs: int = 35,
@@ -41,22 +62,30 @@ class MLP(BaseRemainingUsefulLifeEstimation):
         )
 
         self.hidden_dim = hidden_dim
+        self.hidden_size = hidden_size
+        self.device = device
+        self.dropout_value = dropout_value
+
         self.loss_array = []
 
     _param_conf_map = dict(
         BaseRemainingUsefulLifeEstimation._param_conf_map,
-        **{"hidden_dim": ["MODEL", "HIDDEN_DIM"]}
+        **{"hidden_dim": ["MODEL", "HIDDEN_DIM"],
+        "hidden_size": ["MODEL", "HIDDEN_SIZE"],
+        "dropout_value": ["MODEL", "DROPOUT"],
+        }
     )
 
     def _create_model(self, df: DataFrame, target: Series):
         num_sensors = df.shape[1] 
 
         self.model = nn.Sequential(
-            nn.Dropout(0.5),
+            nn.Dropout(self.dropout_value),
+            LSTM_model(num_sensors, self.hidden_size, self.device),
             nn.Flatten(),
-            nn.Linear(num_sensors * self.window_size, self.hidden_dim),
-            nn.ReLU(),
-            nn.Dropout(0.5),
+            nn.Linear(self.hidden_size, self.hidden_dim),
+            nn.SiLU(),
+            nn.Dropout(self.dropout_value),
             nn.Linear(self.hidden_dim, 1),
             nn.Flatten(start_dim=0),
         )

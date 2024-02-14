@@ -1,29 +1,27 @@
-ice.fault\_diagnosis.models package
-===================================
+Fault diagnosis models
+======================
 
-Submodules
-----------
-
-ice.fault\_diagnosis.models.base module
----------------------------------------
+BaseFaultDiagnosis
+------------------
 
 .. automodule:: ice.fault_diagnosis.models.base
    :members:
    :undoc-members:
    :show-inheritance:
 
-ice.fault\_diagnosis.models.mlp module
---------------------------------------
+MLP
+---
 
 .. automodule:: ice.fault_diagnosis.models.mlp
    :members:
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+TCN
+---
 
-.. automodule:: ice.fault_diagnosis.models
+.. automodule:: ice.fault_diagnosis.models.tcn
    :members:
    :undoc-members:
    :show-inheritance:
+

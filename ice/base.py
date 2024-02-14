@@ -10,6 +10,7 @@ import requests
 import datetime
 import json
 from ice.configs import Config
+import time
 
 
 class BaseDataset(ABC):
@@ -55,8 +56,13 @@ class BaseDataset(ABC):
         self.test_mask = ~self.train_mask
     
     def _get_url(self, public_link):
+        url = ''
         r = requests.get(f'https://cloud-api.yandex.net/v1/disk/public/resources?public_key={public_link}')
-        return r.json()['file']
+        if r.status_code == 200:
+            url = r.json()['file']
+        else:
+            raise Exception(r.json()['description'])
+        return url
 
     def _read_csv_pgbar(self, csv_path, index_col, chunk_size=1024*100):
         rows = sum(1 for _ in open(csv_path, 'r')) - 1
@@ -195,6 +201,55 @@ class BaseModel(ABC):
         assert self.model is not None, "Model creation error."
         self._fit(df, target)
         self._store_atrifacts_train()
+
+    def model_param_estimation(self):
+        assert (
+            self.model != None
+        ), "use model.fit() to create fitted model object before"
+        sample = iter(self.dataloader).__next__()
+        if len(sample) == 2:
+            x, y = sample
+        else:
+            x = sample
+
+        dummy_input = torch.randn(1, x.shape[1], x.shape[2]).to(self.device)
+        repetitions = 500
+        times = np.zeros((repetitions, 1))
+
+
+        if self.device == "cuda":
+            starter, ender = torch.cuda.Event(enable_timing=True), torch.cuda.Event(
+                enable_timing=True
+            )
+            
+            with torch.no_grad():
+                for i in range(repetitions):
+                    starter.record()
+                    _ = self.model(dummy_input)
+                    ender.record()
+                    torch.cuda.synchronize()
+                    curr_time = starter.elapsed_time(ender)
+                    times[i] = curr_time
+
+            
+        else:
+            with torch.no_grad():
+                for i in range(repetitions):
+                    start_time = time.time()
+                    _ = self.model(dummy_input)
+                    end_time = time.time()
+
+                    curr_time = (end_time - start_time) * 1000  # Convert to milliseconds
+                    times[i] = curr_time
+
+            
+            
+        mean_inference_time = np.sum(times) / repetitions
+        std_inference_time = np.std(times)
+       
+        num_params = sum(p.numel() for p in self.model.parameters())
+
+        return num_params, (mean_inference_time, std_inference_time)
 
     def _initialize_paths(self):
         artifacts_path = os.path.join(self._output_dir, self.name)

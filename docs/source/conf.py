@@ -7,7 +7,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'ICE'
-copyright = '2023, ICE Team'
+copyright = '2024, ICE Team'
 author = 'ICE Team'
 #release = '0'
 
@@ -20,6 +20,7 @@ author = 'ICE Team'
 extensions = [
     'sphinx_design',
     'sphinx.ext.autodoc',
+    "sphinx.ext.viewcode",
     'sphinx.ext.napoleon',
     'myst_nb'
 ]
@@ -33,11 +34,15 @@ exclude_patterns = []
 
 html_theme = 'pydata_sphinx_theme'
 html_static_path = ['_static']
+html_css_files = [
+    'css/custom.css',
+]
 
 html_theme_options = {
    "logo": {
       "image_light": "_static/logo-light.png",
       "image_dark": "_static/logo-dark.png",
+      "color_primary": "light-blue"
    }
 }
 
@@ -46,3 +51,5 @@ html_theme_options = {
 # https://myst-nb.readthedocs.io/en/latest/configuration.html
 
 nb_execution_mode = 'off'
+
+autoclass_content = "both"

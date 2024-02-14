@@ -52,8 +52,10 @@ class MLP(BaseHealthIndexEstimation):
         num_sensors = df.shape[1]
         self.model = nn.Sequential(
             nn.Flatten(),
+            nn.Dropout(0.5),
             nn.Linear(num_sensors * self.window_size, self.hidden_dim),
             nn.ReLU(),
+            nn.Dropout(0.5),
             nn.Linear(self.hidden_dim, 1),
             nn.Flatten(start_dim=0),
         )

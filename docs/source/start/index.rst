@@ -5,9 +5,8 @@ Getting started
 ###############
 
 .. toctree::
-    :maxdepth: 1
+    :maxdepth: 2
 
     installation
-    datasets
     tasks/index
     tutorials/index

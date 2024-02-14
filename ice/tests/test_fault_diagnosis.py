@@ -66,6 +66,18 @@ class TestOnSyntheticData:
         assert True
     
     @pytest.mark.parametrize("model_class", models)
+    def test_param_estimation(self, model_class):
+        self.model = model_class(window_size=self.window_size)
+        self.model.fit(self.df, self.target)
+
+        num_params, inference_time = self.model.model_param_estimation()
+
+        print(num_params, inference_time)
+
+        assert num_params >= 0
+        assert inference_time[0] >= 0
+    
+    @pytest.mark.parametrize("model_class", models)
     def test_predict(self, model_class):
         self.model = model_class(window_size=self.window_size)
         self.model._create_model(self.df, self.target)
@@ -98,9 +110,18 @@ class TestOnSyntheticData:
 def test_dataset_loading(dataset_class):
     with pytest.raises(Exception) as exc_info:
         dataset_class(num_chunks=1, force_download=True)
-    assert "File is not a zip file" in str(exc_info.value)
+    if "File is not a zip file" in str(exc_info.value):
+        assert True
+    elif "Download limit exceeded for resource" in str(exc_info.value):
+        assert True
+    else:
+        assert False
 
 
 def test_dataset_small_tep():
-    fd_datasets.FaultDiagnosisSmallTEP(force_download=True)
-    assert True
+    try:
+        fd_datasets.FaultDiagnosisSmallTEP(force_download=True)
+    except Exception as exc_info:
+        assert "Download limit exceeded for resource" in str(exc_info)
+    else:
+        assert True

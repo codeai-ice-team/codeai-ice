@@ -2,17 +2,19 @@ DATASET:
     BATCH_SIZE: 64
 
 MODEL:
-    CLASS_NAME: "MLP"
+    CLASS_NAME: "LSTM"
     WINDOW_SIZE: 32
     HIDDEN_DIM: 512
-    STRIDE: 1
+    HIDDEN_SIZE: 256
+    DROPOUT: 0.5
+    STRIDE: 300
 
 
 OPTIMIZATION:
     LR: 0.0001
     NUM_EPOCHS: 35
 
-EXPERIMENT_NAME: "mlp_remaining_useful_life_estimation"
+EXPERIMENT_NAME: "lstm_remaining_useful_life_estimation"
 TASK: "remaining_useful_life_estimation"
 VERBOSE: True
 DEVICE: "cpu"

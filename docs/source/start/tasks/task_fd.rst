@@ -102,10 +102,61 @@ indicates fewer false alarms.
 References
 """"""""""
 
-[1]   Reinartz, Christopher, Murat Kulahci, and Ole Ravn. "An extended Tennessee 
+The reference results of state-of-the-art papers for the original [1] dataset 
+are presented in Table 1.
+
+.. table:: Table 1: References for TEP dataset. FPR/TPR values. Not all the metrics 
+  are available for comparison.
+
+  +-------+---------+--------------+------------+-----------+--------------+------------+
+  | Fault | PCA[3]  | DBN-SVDD[4]  | UN-DBN[5]  | GAN[6]    | MSDAE-TP[6]  | GRU[7]     |
+  +=======+=========+==============+============+===========+==============+============+
+  | 1     | -/0.98  | 0.02/0.99    | 0.01/0.99  | 0.00/0.99 | 0.01/0.99    | 0.00/1.00  |
+  | 2     | -/0.002 | 0.01/0.07    | 0.02/0.11  | 0.1/0.1   | 0.00/0.22    | 0.00/1.00  |
+  | 3     | -/0.54  | 0.01/0.99    | 0.01/1.00  | 0.06/0.56 | 0.01/1.00    | 0.00/1.00  |
+  | 4     | -/0.22  | 0.01/1.00    | 0.01/1.00  | 0.06/0.32 | 0.01/1.00    | 0.00/1.00  |
+  | 5     | -/0.99  | 0.03/1.00    | 0.01/1.00  | 0.00/1.00 | 0.00/1.00    | 0.00/1.00  |
+  | 6     | -/1.00  | 0.03/1.00    | 0.03/1.00  | 0.00/1.00 | 0.00/1.00    | 0.00/1.00  |
+  | 7     | -/0.96  | 0.02/0.98    | 0.02/0.98  | 0.00/0.98 | 0.02/0.99    | 0.00/1.00  |
+  | 8     | -/0.001 | 0.01/0.01    | 0.01/0.02  | 0.2/0.08  | 0.03/0.04    | 0.00/1.00  |
+  | 9     | -/0.33  | 0.03/0.74    | 0.02/0.82  | 0.00/0.51 | 0.02/0.95    | 0.00/1.00  |
+  | 10    | -/0.2   | 0.01/0.75    | 0.00/0.91  | 0.06/0.58 | 0.03/0.97    | 0.00/1.00  |
+  | 11    | -/0.97  | 0.01/0.99    | 0.01/1.00  | 0.13/0.99 | 0.02/1.00    | 0.00/0.99  |
+  | 12    | -/0.94  | 0.03/0.95    | 0.01/0.95  | 0.02/0.95 | 0.02/0.97    | 0.00/0.99  |
+  | 13    | -/1.00  | 0.02/1.00    | 0.01/1.00  | 0.02/1.00 | 0.01/1.00    | 0.00/1.00  |
+  | 14    | -/0.001 | 0.02/0.14    | 0.02/0.13  | 0.03/0.13 | 0.01/0.39    | 0.00/0.94  |
+  | 15    | -/0.15  | 0.01/0.56    | 0.02/0.64  | 0.2/0.34  | 01/0.92      | 0.00/1.00  |
+  | 16    | -/0.74  | 0.01/0.96    | 0.02/0.98  | 0.02/0.91 | 0.02/0.98    | 0.00/1.00  |
+  | 17    | -/0.88  | 0.03/0.90    | 0.01/0.89  | 0.02/0.90 | 0.01/0.94    | 0.00/1.00  |
+  | 18    | -/0.14  | 0.02/0.59    | 0.03/0.98  | 0.01/0.12 | 0.02/1.00    | 0.00/1.00  |
+  | 19    | -/0.31  | 0.01/0.82    | 0.02/0.87  | 0.00/0.58 | 0.01/0.92    | 0.00/1.00  |
+  | 20    | -/0.26  | 0.02/0.52    | 0.03/0.50  | 0.06/0.5  | 0.02/0.60    | -/-        |
+  +-------+---------+--------------+------------+-----------+--------------+------------+
+
+[1] Reinartz, Christopher, Murat Kulahci, and Ole Ravn. "An extended Tennessee 
 Eastman simulation dataset for fault-detection and decision support systems." 
 Computers & Chemical Engineering 149 (2021): 107281
 
-[2]   Abid, Anam, Muhammad Tahir Khan, and Javaid Iqbal. "A review on fault 
+[2] Abid, Anam, Muhammad Tahir Khan, and Javaid Iqbal. "A review on fault 
 detection and diagnosis techniques: basics and beyond." Artificial Intelligence 
 Review 54 (2021): 3639-3664.
+
+[3] Yan, Shifu, and Xuefeng Yan. "Design teacher and supervised dual stacked 
+auto-encoders for quality-relevant fault detection in industrial process." 
+Applied Soft Computing 81 (2019): 105526.
+
+[4] Yu, Jianbo, and Xuefeng Yan. "Layer-by-layer enhancement strategy of 
+favorable features of the deep belief network for industrial process monitoring." 
+Industrial & Engineering Chemistry Research 57.45 (2018): 15479-15490.
+
+[5] Yu, Jianbo, and Xuefeng Yan. "Whole process monitoring based on unstable 
+neuron output information in hidden layers of deep belief network." IEEE 
+transactions on cybernetics 50.9 (2019): 3998-4007.
+
+[6] Yu, Jianbo, and Xuefeng Yan. "Multiscale intelligent fault detection system 
+based on agglomerative hierarchical clustering using stacked denoising 
+autoencoder with temporal information." Applied Soft Computing 95 (2020): 106525.
+
+[7] Lomov, Ildar, et al. "Fault detection in Tennessee Eastman process with 
+temporal deep learning models." Journal of Industrial Information Integration 23 
+(2021): 100216.

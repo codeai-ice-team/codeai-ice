@@ -1,0 +1,25 @@
+DATASET:
+    BATCH_SIZE: 128
+    VAL_RATIO: 0.15
+
+MODEL:
+    CLASS_NAME: "STGAT_MAD"
+    WINDOW_SIZE: 100
+    STRIDE: 1
+    THRESHOLD_LEVEL: 0.95
+    LAYER_NUMB: 2
+    LSTM_N_LAYERS: 1
+    LSTM_HID_DIM: 150
+    RECON_N_LAYERS: 1
+    RECON_HID_DIM: 150
+    DROPOUT: 0.2
+
+OPTIMIZATION:
+    LR: 0.001
+    NUM_EPOCHS: 10
+
+EXPERIMENT_NAME: "stgat_mad_anomaly_detection"
+TASK: "anomaly_detection"
+VERBOSE: True
+DEVICE: "cpu"
+SEED: 42

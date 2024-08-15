@@ -1,11 +1,13 @@
 DATASET:
     BATCH_SIZE: 64
+    VAL_RATIO: 0.15
 
 MODEL:
     CLASS_NAME: "LSTM"
     WINDOW_SIZE: 32
     HIDDEN_DIM: 512
     HIDDEN_SIZE: 256
+    NUM_LAYERS: 2
     DROPOUT: 0.5
     STRIDE: 300
 
@@ -18,3 +20,4 @@ EXPERIMENT_NAME: "lstm_remaining_useful_life_estimation"
 TASK: "remaining_useful_life_estimation"
 VERBOSE: True
 DEVICE: "cpu"
+SEED: 42

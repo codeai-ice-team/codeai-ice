@@ -29,7 +29,7 @@ def nonsimmetric_function(value):
     return float(np.exp((-value / 13)) - 1 if value < 0 else np.exp((value / 10)) - 1)
 
 
-def score(pred: list, target: list) -> float:
+def cmapss_score(pred: list, target: list) -> float:
     """
     Non-simmetric metric proposed in the original dataset paper.
     DOI: 10.1109/PHM.2008.4711414

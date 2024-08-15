@@ -1,9 +1,11 @@
 DATASET:
     BATCH_SIZE: 128
+    VAL_RATIO: 0.15
 
 MODEL:
     CLASS_NAME: "TCN"
     WINDOW_SIZE: 25
+    STRIDE: 1
     HIDDEN_DIM: 256
     KERNEL_SIZE: 5
     NUM_LAYERS: 4
@@ -18,3 +20,4 @@ EXPERIMENT_NAME: "tcn_fault_daignosis"
 TASK: "fault_diagnosis"
 VERBOSE: True
 DEVICE: "cpu"
+SEED: 42

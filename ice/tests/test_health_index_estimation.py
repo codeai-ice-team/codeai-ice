@@ -5,6 +5,8 @@ from ice.base import BaseDataset
 from ice.health_index_estimation import models as fd_models
 from ice.health_index_estimation.metrics import mse
 from ice.health_index_estimation import datasets as fd_datasets
+from unittest import mock
+
 
 from inspect import getmembers, isclass
 import torch
@@ -44,8 +46,8 @@ class TestOnSyntheticData:
                 "run_id": 1,
             }
         )
-        self.window_size = 10
-        self.num_sensors = 2
+        self.window_size = 64
+        self.num_sensors = 6
         self.df = pd.concat([df0, df1, df2]).set_index(["run_id", "sample"])
         self.target = pd.Series(
             [i for i in range(100)]
@@ -96,7 +98,8 @@ class TestOnSyntheticData:
     @pytest.mark.parametrize("model_class", models)
     def test_eval(self, model_class):
         self.model = model_class(window_size=self.window_size)
-        self.model._create_model(self.df, self.target)
+        self.model._set_dims(self.df, self.target)
+        self.model._create_model(self.model.input_dim, self.model.output_dim)
 
         metrics = self.model.evaluate(self.df, self.target)
         assert metrics["mse"] >= 0
@@ -104,11 +107,21 @@ class TestOnSyntheticData:
     @pytest.mark.parametrize("model_class", models)
     def test_predict(self, model_class):
         self.model = model_class(window_size=self.window_size)
-        self.model._create_model(self.df, self.target)
+        self.model._set_dims(self.df, self.target)
+        self.model._create_model(self.num_sensors, 1)
         sample = torch.randn(16, self.window_size, self.num_sensors)
 
         pred_target = self.model.predict(sample)
         assert pred_target.shape == (16,)
+
+    @pytest.mark.parametrize("model_class", models)
+    def test_optimize(self, model_class):
+        with mock.patch('torch.use_deterministic_algorithms', return_value=None):
+            self.model = model_class(window_size=self.window_size)
+            self.model.optimize(self.df, self.target, n_trials=1, optimize_metric="mse")
+            self.model.optimize(self.df, self.target, n_trials=1)
+            assert True
+
 
 
 @pytest.mark.parametrize("dataset_class", datasets)

@@ -1,5 +1,4 @@
-from pandas import DataFrame
-from sklearn.preprocessing import StandardScaler
+import pandas as pd
 from torch import nn
 
 from ice.anomaly_detection.models.base import BaseAnomalyDetection
@@ -8,15 +7,15 @@ from ice.anomaly_detection.models.base import BaseAnomalyDetection
 class MLP(nn.Module):
     def __init__(
             self,
-            num_sensors: int,
+            input_dim: int,
             window_size: int,
             hidden_dims: list,
             decoder: bool = False,
             ):
         super().__init__()
-        self.num_sensors = num_sensors
+        self.input_dim = input_dim
         self.window_size = window_size
-        self.hidden_dims = [num_sensors * window_size]
+        self.hidden_dims = [input_dim * window_size]
         self.decoder = decoder
         if self.decoder:
             self.hidden_dims = hidden_dims + self.hidden_dims
@@ -35,14 +34,14 @@ class MLP(nn.Module):
     def forward(self, x):
         output = self.mlp(x)
         if self.decoder:
-            return output.view(-1, self.window_size, self.num_sensors)
+            return output.view(-1, self.window_size, self.input_dim)
 
         return output
 
 
 class AutoEncoderMLP(BaseAnomalyDetection):
     """
-    Autoencoder (AE) consists of encoder and decoder parts. Each
+    MLP autoencoder consists of MLP encoder and MLP decoder parts. Each
     sample is reshaped to a vector (B, L, C) -> (B, L * C) for calculations
     and to a vector (B, L * C) -> (B, L, C) for the output. Where B is the
     batch size, L is the sequence length, C is the number of sensors.
@@ -50,18 +49,24 @@ class AutoEncoderMLP(BaseAnomalyDetection):
     def __init__(
             self,
             window_size: int,
+            stride: int = 1,
             batch_size: int = 128,
             lr: float = 0.001,
             num_epochs: int = 10,
             device: str = 'cpu',
             verbose: bool = False,
             name: str = 'ae_anomaly_detection',
-            threshold: float = 0.95,
-            hidden_dims: list = [256, 128, 64],
+            random_seed: int = 42,
+            val_ratio: float = 0.15,
+            save_checkpoints: bool = False,
+            threshold_level: float = 0.95,
+            hidden_dims: list = [256, 128, 64]
             ):
         """
         Args:
             window_size (int): The window size to train the model.
+            stride (int): The time interval between first points of consecutive 
+                sliding windows in training.
             batch_size (int): The batch size to train the model.
             lr (float): The larning rate to train the model.
             num_epochs (float): The number of epochs to train the model.
@@ -69,19 +74,19 @@ class AutoEncoderMLP(BaseAnomalyDetection):
                 `cuda` are possible.
             verbose (bool): If true, show the progress bar in training.
             name (str): The name of the model for artifact storing.
-            threshold (float): The boundary for anomaly detection.
+            random_seed (int): Seed for random number generation to ensure reproducible results.
+            val_ratio (float): Proportion of the dataset used for validation, between 0 and 1.
+            save_checkpoints (bool): If true, store checkpoints.
+            threshold_level (float): Takes a value from 0 to 1. It specifies
+                the quantile in the distribution of errors on the training
+                dataset at which the threshold value is set.
             hidden_dims (list): Dimensions of hidden layers in encoder/decoder.
         """
         super().__init__(
-            window_size, batch_size, lr, num_epochs, device, verbose, name, threshold
+            window_size, stride, batch_size, lr, num_epochs, device, verbose, name, random_seed, 
+            val_ratio, save_checkpoints, threshold_level
         )
-
-        self.window_size = window_size
         self.hidden_dims = hidden_dims
-        self.threshold = threshold
-        self.loss_fn = nn.L1Loss(reduction='none')
-        self.preprocessing = True
-        self.scaler = StandardScaler()
 
     _param_conf_map = dict(BaseAnomalyDetection._param_conf_map,
             **{
@@ -89,18 +94,17 @@ class AutoEncoderMLP(BaseAnomalyDetection):
             }
         )
 
-    def _create_model(self, df: DataFrame):
-        num_sensors = df.shape[1]
+    def _create_model(self, input_dim: int, output_dim: int):
         self.model = nn.Sequential(
             MLP(
-                num_sensors,
+                input_dim,
                 self.window_size,
                 hidden_dims=self.hidden_dims,
             ),
             MLP(
-                num_sensors,
+                input_dim,
                 self.window_size,
                 hidden_dims=self.hidden_dims[::-1],
                 decoder=True
             )
-            )
+        )

@@ -1,0 +1,23 @@
+DATASET:
+    BATCH_SIZE: 64
+    VAL_RATIO: 0.15
+
+MODEL:
+    CLASS_NAME: "IR"
+    WINDOW_SIZE: 32
+    NUM_LAYERS: 3
+    DROPOUT: 0.2
+    STRIDE: 1
+    NOISE: 0.0120974
+    DIM_FEEDFORWARD: 154
+
+
+OPTIMIZATION:
+    LR: 0.0001
+    NUM_EPOCHS: 35
+
+EXPERIMENT_NAME: "IR_remaining_useful_life_estimation"
+TASK: "remaining_useful_life_estimation"
+VERBOSE: True
+DEVICE: "cpu"
+SEED: 42

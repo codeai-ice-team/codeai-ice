@@ -125,6 +125,7 @@ class TCN(BaseFaultDiagnosis):
     def __init__(
             self, 
             window_size: int,
+            stride: int = 1,
             hidden_dim: int=256,
             kernel_size: int=5,
             num_layers: int=4,
@@ -135,7 +136,10 @@ class TCN(BaseFaultDiagnosis):
             num_epochs: int=10,
             device: str='cpu',
             verbose: bool=False,
-            name: str='tcn_fault_diagnosis'
+            name: str='tcn_fault_diagnosis',
+            random_seed: int = 42,
+            val_ratio: float = 0.15,
+            save_checkpoints: bool = False
         ):
         """
         Args:
@@ -152,10 +156,14 @@ class TCN(BaseFaultDiagnosis):
                 `cuda` are possible.
             verbose (bool): If true, show the progress bar in training.
             name (str): The name of the model for artifact storing.
+            random_seed (int): Seed for random number generation to ensure reproducible results.
+            val_ratio (float): Proportion of the dataset used for validation, between 0 and 1.
+            save_checkpoints (bool): If true, store checkpoints.
         """
         super().__init__(
-            window_size, batch_size, lr, num_epochs, device, verbose, name
+            window_size, stride, batch_size, lr, num_epochs, device, verbose, name, random_seed, val_ratio, save_checkpoints
         )
+        self.val_metrics = True
 
         self.hidden_dim = hidden_dim
         self.kernel_size = kernel_size
@@ -173,16 +181,14 @@ class TCN(BaseFaultDiagnosis):
             }
         )   
 
-    def _create_model(self, df: DataFrame, target: Series):
-        num_sensors = df.shape[1]
-        num_classes = len(set(target))
+    def _create_model(self, input_dim: int, output_dim: int):
         self.model = _TCNModule(
-            input_dim=num_sensors,
+            input_dim=input_dim,
             kernel_size=self.kernel_size,
             hidden_dim=self.hidden_dim,
             num_layers=self.num_layers,
             dilation_base=self.dilation_base,
-            output_dim=num_classes,
+            output_dim=output_dim,
             dropout=self.dropout,
             seq_len=self.window_size,
         )

@@ -35,7 +35,7 @@ class Milling(BaseDataset):
         if not os.path.exists(zfile_path) or force_download:
             self._download_pgbar(url, zfile_path, self.name, num_chunks)
 
-        self._extracting_files(zfile_path, ref_path)
+        self._extracting_files(zfile_path, "data/")
 
         # test and train subset number of cuts
         train_nums = [1, 3, 5, 7, 8, 9, 10, 11, 12, 13]
@@ -43,7 +43,7 @@ class Milling(BaseDataset):
 
         data = [
             self._read_csv_pgbar(
-                ref_path + f"case_{i+1}.csv", index_col=["cut_no", "sample"]
+                ref_path + f"case_{i+1}.csv", index_col=["run_id", "sample"]
             )
             for i in range(16)
         ]
@@ -51,6 +51,7 @@ class Milling(BaseDataset):
         inter_func = []
 
         for i in range(15):
+            data[i]["material"] = data[i]["material"].astype("float64")
             y = data[i].dropna().VB
             x = data[i].dropna().time
 
@@ -64,18 +65,13 @@ class Milling(BaseDataset):
             else:
                 data[i] = data[i].fillna(0)
 
-        self.df = [data[i].drop(columns=["VB"]) for i in train_nums]
+        self.df = [
+            data[i].drop(columns=["VB", "Unnamed: 0", "case", "run"])
+            for i in train_nums
+        ]
         self.target = [data[i]["VB"] for i in train_nums]
 
-        self.test = [data[i].drop(columns=["VB"]) for i in test_nums]
+        self.test = [
+            data[i].drop(columns=["VB", "Unnamed: 0", "case", "run"]) for i in test_nums
+        ]
         self.test_target = [data[i]["VB"] for i in test_nums]
-
-    def _read_csv_pgbar(self, csv_path, index_col, chunksize=1024 * 100):
-        df = pd.read_csv(csv_path)
-        df.rename(columns={"cut_no": "run_id"}, inplace=True)
-        df = df.set_index(["run_id", "sample"]).drop(
-            columns=["Unnamed: 0", "case", "run"]
-        )
-        df["material"] = df["material"].astype("float64")
-
-        return df

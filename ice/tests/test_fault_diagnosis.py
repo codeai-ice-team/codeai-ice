@@ -80,7 +80,8 @@ class TestOnSyntheticData:
     @pytest.mark.parametrize("model_class", models)
     def test_predict(self, model_class):
         self.model = model_class(window_size=self.window_size)
-        self.model._create_model(self.df, self.target)
+        self.model._set_dims(self.df, self.target)
+        self.model._create_model(self.model.input_dim, self.model.output_dim)
         sample = torch.randn(16, self.window_size, self.num_sensors)
         pred_target = self.model.predict(sample)
         assert pred_target.shape == (16,)
@@ -88,9 +89,17 @@ class TestOnSyntheticData:
     @pytest.mark.parametrize("model_class", models)
     def test_eval(self, model_class):
         self.model = model_class(window_size=self.window_size)
-        self.model._create_model(self.df, self.target)
+        self.model._set_dims(self.df, self.target)
+        self.model._create_model(self.model.input_dim, self.model.output_dim)
         metrics = self.model.evaluate(self.df, self.target)
         assert metrics['accuracy'] >= 0
+
+    @pytest.mark.parametrize("model_class", models)
+    def test_optimize(self, model_class):
+        self.model = model_class(window_size=self.window_size)
+        self.model.optimize(self.df, self.target, n_trials=1, optimize_metric='accuracy', direction="maximize")
+        self.model.optimize(self.df, self.target, n_trials=1)
+        assert True
     
     def test_metrics(self):
         np.random.seed(0)

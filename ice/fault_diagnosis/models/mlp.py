@@ -12,13 +12,17 @@ class MLP(BaseFaultDiagnosis):
     def __init__(
             self, 
             window_size: int,
+            stride: int = 1,
             hidden_dim: int=256,
             batch_size: int=128,
             lr: float=0.001,
             num_epochs: int=10,
             device: str='cpu',
             verbose: bool=False,
-            name: str='mlp_fault_diagnosis'
+            name: str='mlp_fault_diagnosis',
+            random_seed: int = 42,
+            val_ratio: float = 0.15,
+            save_checkpoints: bool = False
         ):
         """
         Args:
@@ -31,10 +35,14 @@ class MLP(BaseFaultDiagnosis):
                 `cuda` are possible.
             verbose (bool): If true, show the progress bar in training.
             name (str): The name of the model for artifact storing.
+            random_seed (int): Seed for random number generation to ensure reproducible results.
+            val_ratio (float): Proportion of the dataset used for validation, between 0 and 1.
+            save_checkpoints (bool): If true, store checkpoints.
         """
         super().__init__(
-            window_size, batch_size, lr, num_epochs, device, verbose, name
+            window_size, stride, batch_size, lr, num_epochs, device, verbose, name, random_seed, val_ratio, save_checkpoints
         )
+        self.val_metrics = True
 
         self.hidden_dim = hidden_dim
 
@@ -44,12 +52,10 @@ class MLP(BaseFaultDiagnosis):
             }
         )   
 
-    def _create_model(self, df: DataFrame, target: Series):
-        num_sensors = df.shape[1]
-        num_classes = len(set(target))
+    def _create_model(self, input_dim: int, output_dim: int):
         self.model = nn.Sequential(
             nn.Flatten(),
-            nn.Linear(num_sensors * self.window_size, self.hidden_dim),
+            nn.Linear(input_dim * self.window_size, self.hidden_dim),
             nn.ReLU(),
-            nn.Linear(self.hidden_dim, num_classes),
+            nn.Linear(self.hidden_dim, output_dim),
         )

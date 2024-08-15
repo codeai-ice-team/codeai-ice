@@ -4,4 +4,4 @@
 Custom classes
 ##############
 
-in progress...
+2nd project stage problem

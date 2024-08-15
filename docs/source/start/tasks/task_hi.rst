@@ -61,10 +61,10 @@ simultaneously to the device Health Index. To do this, we performed min-max scal
 corresponds to the maximum allowable wear of 1.58 mm, and subtracted the obtained curves 
 from 1 to reduce the impact of implicit weighting of healthy states.
 
-.. figure:: ../../_static/hi/HI_deviation.png
+.. figure:: ../../_static/hi/target_milling.jpg
    :align: center
 
-   Figure 2: Milling dataset targets.
+   Figure 2: Milling dataset trajectory targets.
 
 Metrics
 """""""

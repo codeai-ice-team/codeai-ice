@@ -1,0 +1,25 @@
+DATASET:
+    BATCH_SIZE: 128
+    VAL_RATIO: 0.15
+
+MODEL:
+    CLASS_NAME: "AnomalyTransformer"
+    WINDOW_SIZE: 100
+    STRIDE: 1
+    THRESHOLD_LEVEL: 0.95
+    D_MODEL: 256
+    N_HEADS: 8
+    E_LAYERS: 3
+    D_FF: 256
+    DROPOUT: 0.0
+    ACTIVATION: 'gelu'
+
+OPTIMIZATION:
+    LR: 0.0001
+    NUM_EPOCHS: 10
+
+EXPERIMENT_NAME: "transformer_anomaly_detection"
+TASK: "anomaly_detection"
+VERBOSE: True
+DEVICE: "cpu"
+SEED: 42

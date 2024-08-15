@@ -35,8 +35,7 @@ class TestOnSyntheticData:
 
     @pytest.mark.parametrize("model_class", models)
     def test_exception(self, model_class):
-        self.model = model_class(window_size=self.window_size)
-        self.model._create_model(self.df)
+        self.model = model_class(window_size=self.window_size, )
         self.model.fit(self.df[:100])
 
         with pytest.raises(Exception) as exc_info:
@@ -55,6 +54,12 @@ class TestOnSyntheticData:
         assert "An index should contain columns `run_id` and `sample`." in str(exc_info.value)
 
     @pytest.mark.parametrize("model_class", models)
+    def test_optimize(self, model_class):
+        self.model = model_class(window_size=self.window_size)
+        self.model.optimize(self.df[:100], n_trials=1, optimize_parameter="lr")
+        assert True
+
+    @pytest.mark.parametrize("model_class", models)
     def test_param_estimation(self, model_class):
         self.model = model_class(window_size=self.window_size)
         self.model.fit(self.df[:100])
@@ -69,14 +74,12 @@ class TestOnSyntheticData:
     @pytest.mark.parametrize("model_class", models)
     def test_fit(self, model_class):
         self.model = model_class(window_size=self.window_size)
-        self.model._create_model(self.df)
         self.model.fit(self.df[:100])
         assert True
 
     @pytest.mark.parametrize("model_class", models)
     def test_eval(self, model_class):
         self.model = model_class(window_size=self.window_size)
-        self.model._create_model(self.df)
         self.model.fit(self.df[:100])
         metrics = self.model.evaluate(self.df, self.target)
         assert metrics['accuracy'] >= 0
@@ -84,7 +87,6 @@ class TestOnSyntheticData:
     @pytest.mark.parametrize("model_class", models)
     def test_predict(self, model_class):
         self.model = model_class(window_size=self.window_size)
-        self.model._create_model(self.df)
         self.model.fit(self.df[:100])
         sample = torch.randn(16, self.window_size, self.num_sensors)
         pred_target = self.model.predict(sample)

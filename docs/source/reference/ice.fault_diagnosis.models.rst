@@ -1,6 +1,8 @@
 Fault diagnosis models
 ======================
 
+.. _base_fd:
+
 BaseFaultDiagnosis
 ------------------
 
@@ -8,6 +10,8 @@ BaseFaultDiagnosis
    :members:
    :undoc-members:
    :show-inheritance:
+
+.. _mlp:
 
 MLP
 ---

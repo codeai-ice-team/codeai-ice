@@ -4,4 +4,8 @@
 Custom classes
 ##############
 
-2nd project stage problem
+.. toctree::
+    :maxdepth: 1
+
+    custom_model
+    custom_data

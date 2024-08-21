@@ -98,15 +98,6 @@ class BaseAnomalyDetection(BaseModel, ABC):
             }
         )
     
-    def load_checkpoint(self, checkpoint_path: str):
-        """Load checkpoint.
-
-        Args:
-            checkpoint_path (str): Path to load checkpoint.
-        """
-        super().load_checkpoint(checkpoint_path)
-        self.threshold_value = self._cfg['MODEL']['THRESHOLD_VALUE']
-    
     def _prepare_for_training(self, input_dim: int, output_dim: int):
         self.optimizer = Adam(self.model.parameters(), lr=self.lr)
         self.loss_fn = nn.L1Loss()

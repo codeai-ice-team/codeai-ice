@@ -4,4 +4,8 @@
 Advanced materials
 ##################
 
-2nd project stage problem
+.. toctree::
+    :maxdepth: 2
+
+    optimization_tutorial
+    fine-tuning_tutorial

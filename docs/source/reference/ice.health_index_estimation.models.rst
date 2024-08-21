@@ -1,19 +1,39 @@
-Remaining useful life models
-============================
+Health index models
+===================
 
-BaseRemainingUsefulLifeEstimation
----------------------------------
+.. _base_hi:
 
-.. automodule:: ice.health_index_estimation.models.base
+BaseHealthIndexEstimation
+-------------------------
+
+.. autoclass:: ice.health_index_estimation.models.base.BaseHealthIndexEstimation
    :members:
-   :undoc-members:
    :show-inheritance:
 
 MLP
 ---
 
-.. automodule:: ice.health_index_estimation.models.mlp
+.. autoclass:: ice.health_index_estimation.models.mlp.MLP
    :members:
-   :undoc-members:
    :show-inheritance:
 
+IE_SBiGRU
+---------
+
+.. autoclass:: ice.health_index_estimation.models.IE_SBiGRU.IE_SBiGRU
+   :members:
+   :show-inheritance:
+
+Stacked_LSTM
+------------
+
+.. autoclass:: ice.health_index_estimation.models.Stacked_LSTM.Stacked_LSTM
+   :members:
+   :show-inheritance:
+
+TCM
+---
+
+.. autoclass:: ice.health_index_estimation.models.TCM.TCM
+   :members:
+   :show-inheritance:

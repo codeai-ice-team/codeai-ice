@@ -85,14 +85,14 @@ equipment :math:`i`, :math:`N` is number of test samples.
 References
 """"""""""
 
-The reference results of state-of-the-art papers for the original [1] 
-dataset are presented in table 1.
+.. The reference results of state-of-the-art papers for the original [1] 
+   dataset are presented in table 1.
 
-Since the test dataset involves processes with unknown characteristics, it limits most 
-related HI-based work approaches, especially similarity-based techniques, which require 
-information about similar process trajectories. 
+   Since the test dataset involves processes with unknown characteristics, it limits most 
+   related HI-based work approaches, especially similarity-based techniques, which require 
+   information about similar process trajectories. 
 
-.. table:: Table 1: References for C-Milling dataset, cuts ‘1’, ‘3’, ‘7’ testing, with the original dataset wear target.
+   .. table:: Table 1: References for C-Milling dataset, cuts ‘1’, ‘3’, ‘7’ testing, with the original dataset wear target.
 
    +--------------------------------+-----------------------+
    | Model                          | RMSE (cycles)         | 

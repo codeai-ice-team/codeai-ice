@@ -49,8 +49,6 @@ class TotalLoss:
         else:
             return self.RegLoss(y.to(torch.float64), model_output.to(torch.float64))
 
-
-
 class BaseRemainingUsefulLifeEstimation(BaseModel, ABC):
     """Base class for all RUL models."""
 

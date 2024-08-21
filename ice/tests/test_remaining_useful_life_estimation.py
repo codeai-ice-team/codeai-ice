@@ -70,7 +70,7 @@ class TestOnSyntheticData:
             _df.index.names = ["index0", "index1"]
             _target = self.target.copy()
             _target.index.names = ["index0", "index1"]
-            self.model.fit(_df, _target)
+            self.model.fit(_df, _target)    
         assert "An index should contain columns `run_id` and `sample`." in str(
             exc_info.value
         )

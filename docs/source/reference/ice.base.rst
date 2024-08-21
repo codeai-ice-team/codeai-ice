@@ -1,8 +1,18 @@
 Base modules
 ============
 
+.. _base_dataset:
 
-.. automodule:: ice.base
+BaseDataset
+-----------
+
+.. autoclass:: ice.base.BaseDataset
    :members:
-   :undoc-members:
+   :show-inheritance:
+
+BaseModel
+-----------
+
+.. autoclass:: ice.base.BaseModel
+   :members:
    :show-inheritance:

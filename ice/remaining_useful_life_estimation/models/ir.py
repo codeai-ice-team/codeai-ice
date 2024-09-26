@@ -104,7 +104,12 @@ class Transformer_encoder(nn.Module):
             activation = nn.LeakyReLU(),
             dropout=dropout
         )
-        self.encoder = nn.TransformerEncoder(encoder_layers, num_layers=num_layers, norm=torch.nn.LayerNorm(self.feature_dim))
+        self.encoder = nn.TransformerEncoder(
+            encoder_layers, 
+            num_layers=num_layers, 
+            norm=torch.nn.LayerNorm(self.feature_dim),
+            enable_nested_tensor=False,
+        )
         self.lstm_block1 = LSTMBlock(self.feature_dim, self.seq_len, num_layers=2, dropout=dropout, device=device)
 
         self.latent_layer = nn.Linear(self.seq_len * self.feature_dim * 2, self.output_dim)

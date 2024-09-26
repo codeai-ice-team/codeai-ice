@@ -8,7 +8,7 @@ license = "License"
 [tool.poetry.dependencies]
 python = "^3.9"
 numpy = "^1.23.5"
-pandas = "^1.5.3"
+pandas = "^2.1.4"
 torch = "^2.0.0"
 tqdm = "^4.66.1"
 requests = "^2.31.0"

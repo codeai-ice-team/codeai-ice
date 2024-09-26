@@ -31,6 +31,7 @@ def correct_daignosis_rate(pred: np.ndarray, target: np.ndarray) -> float:
     cm = confusion_matrix(target, pred, labels=np.arange(target.max() + 1))
     correct = cm[1:, 1:].diagonal().sum()
     true_positive = cm[1:, 1:].sum()
+    true_positive = true_positive if true_positive else 1
     return correct / true_positive
 
 
